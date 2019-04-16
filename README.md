@@ -1,6 +1,8 @@
 # ramorm
 Model based ORM in memory
+
 ###Usage
+```python
 import orm
 import model
 
@@ -20,3 +22,4 @@ get_my_obj = db.get(TestModel, a=1)
 print(get_my_obj.a)
 >> 1
 
+```
