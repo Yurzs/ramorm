@@ -2,6 +2,13 @@ from model import *
 from functools import wraps
 
 
+class Query:
+
+
+    def filter(self):
+        pass
+
+
 class Orm:
     class __Decorators(object):
 
@@ -21,7 +28,6 @@ class Orm:
 
             @wraps(func)
             def wrapper(self, *args, **kwargs):
-                print(self, args, kwargs)
                 if not kwargs.get('model_class', None):
                     for obj in args:
                         if check(obj):
@@ -53,6 +59,19 @@ class Orm:
                 for attr, value in kwargs.items():
                     if getattr(item, attr, None) == value:
                         counter += 1
+                    elif len(attr.split('__')) > 1:
+                        if attr.split('__')[-1] == 'gt':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) > value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'lt':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) < value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'gte':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) >= value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'lte':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) <= value:
+                                counter += 1
                 if for_trigger == counter:
                     return item
         return None
@@ -68,6 +87,19 @@ class Orm:
                 for attr, value in kwargs.items():
                     if getattr(item, attr, None) == value:
                         counter += 1
+                    elif len(attr.split('__')) > 1:
+                        if attr.split('__')[-1] == 'gt':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) > value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'lt':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) < value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'gte':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) >= value:
+                                counter += 1
+                        elif attr.split('__')[-1] == 'lte':
+                            if getattr(item, '__'.join(attr.split('__')[:-1]), None) <= value:
+                                counter += 1
                 if for_trigger == counter:
                     found.append(item)
         return found

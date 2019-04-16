@@ -4,7 +4,7 @@ from parameterized import parameterized
 
 import model
 import orm
-
+import fields
 
 class TestModel(model.Model):
     a = model.IntegerField(default=1)
@@ -66,7 +66,9 @@ class OrmTest(unittest.TestCase):
 
 
 class FieldsTest(unittest.TestCase):
-    pass
+
+    def test_IntegerField(self):
+        self.assertTrue(fields.IntegerField(default=1))
 
 
 if __name__ == '__main__':

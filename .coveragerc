@@ -1,9 +1,5 @@
 [run]
-branch = True
-source = orm
-    model
-    fields
-    primitives
+source = ramorm/*
 
 
 [report]
