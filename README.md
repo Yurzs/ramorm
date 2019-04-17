@@ -68,4 +68,6 @@ db.drop()
 
 - [ ] Backup to file
 
+- [ ] PyPI package
+
 - [ ] Integration with postgresql, redis

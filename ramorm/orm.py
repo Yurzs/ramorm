@@ -1,4 +1,4 @@
-from model import *
+from ramorm.model import *
 from functools import wraps
 
 
@@ -106,10 +106,12 @@ class Orm:
 
     @__Decorators.validate_input_model
     def delete(self, node_class, **kwargs):
+        changes_made = False
         for item in self.filter(node_class, **kwargs):
             ind = self.__storage___.index(item)
             self.__storage___.pop(ind)
-        return True
+            changes_made = True
+        return changes_made
 
     def drop(self):
         self.__storage___ = []

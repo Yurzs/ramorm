@@ -2,9 +2,8 @@ import unittest
 
 from parameterized import parameterized
 
-import model
-import orm
-import fields
+from ramorm import orm, fields, model
+
 
 class TestModel(model.Model):
     a = model.IntegerField(default=1)

@@ -1,4 +1,4 @@
-from primitives import *
+from ramorm.primitives import *
 
 
 class ValidationError(Exception):

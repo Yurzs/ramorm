@@ -1,4 +1,4 @@
-from fields import *
+from ramorm.fields import *
 import re
 
 
