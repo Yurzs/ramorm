@@ -54,18 +54,6 @@ class Field:
 class IntegerField(Field):
     type = int
 
-    def __int__(self):
-        return self
-
-    def __eq__(self, other):
-        return self == other
-
-    def __gt__(self, other):
-        return self > other
-
-    def __lt__(self, other):
-        return self < other
-
 
 class TextField(Field):
     type = str

@@ -4,8 +4,7 @@ Model based ORM in memory
 ![codecov](https://codecov.io/gh/Yurzs/ramorm/branch/master/graph/badge.svg)
 ### Usage
 ```python
-import orm
-import model
+from ramorm import orm, model
 
 db = orm.Orm('my_test_database') 
 
@@ -47,7 +46,7 @@ for vehicle in db.filter(Vehicle, max_speed__gte=10):
 >>  ('Tesla Model3', 4, 230)
 >>  ('Bicycle', 2, 50)
 ```
-For deleting objects from db use ```delete``` function. Returns true if changes were made to database
+For deleting objects from db use ```delete``` function. Returns ```True``` if changes were made to database
 ```python
 db.delete(Vehicle, name='Bicycle')
 >> True

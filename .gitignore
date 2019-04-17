@@ -3,5 +3,4 @@ venv/**
 .idea
 .idea/**
 .coverage
-.coveragerc
 .DS_Store

@@ -1,7 +1,4 @@
 import unittest
-
-from parameterized import parameterized
-
 import ramorm
 
 
@@ -15,15 +12,11 @@ class TestModel2(ramorm.Model):
 
 class OrmTest(unittest.TestCase):
 
-    @parameterized.expand([
-        ['int', 123],
-        ['obj', ramorm.Model]
-    ])
-
-    def test_Orm(self, name, val):
+    def test_Orm(self):
         self.assertTrue(ramorm.Orm('test'))
-        with self.assertRaises(TypeError):
-            ramorm.Orm(val)
+        for item_type in [123, ramorm.Model]:
+            with self.assertRaises(TypeError):
+                ramorm.Orm(item_type)
 
     def test_orm_push(self):
         db = ramorm.Orm('testcase')
@@ -60,7 +53,6 @@ class OrmTest(unittest.TestCase):
         db.push(test2)
         db.delete(TestModel, a=1)
         self.assertEqual(db.filter(TestModel), [test3])
-        print(db.filter(TestModel))
         self.assertEqual(db.get(TestModel2), test2)
 
 
