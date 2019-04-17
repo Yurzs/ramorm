@@ -55,12 +55,3 @@ class OrmTest(unittest.TestCase):
         self.assertEqual(db.filter(TestModel), [test3])
         self.assertEqual(db.get(TestModel2), test2)
 
-
-class FieldsTest(unittest.TestCase):
-
-    def test_IntegerField(self):
-        self.assertTrue(ramorm.IntegerField(default=1))
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -2,6 +2,10 @@
 Model based ORM in memory
 
 ![codecov](https://codecov.io/gh/Yurzs/ramorm/branch/master/graph/badge.svg)
+### Installation
+```
+pip install ramorm
+```
 ### Usage
 ```python
 from ramorm import orm, model
@@ -67,6 +71,6 @@ db.drop()
 
 - [ ] Backup to file
 
-- [ ] PyPI package
+- [x] PyPI package
 
 - [ ] Integration with postgresql, redis
