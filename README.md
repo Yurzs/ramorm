@@ -21,27 +21,51 @@ print(tesla3.name,tesla3.wheels, tesla3.max_speed)
 bicycle = Vehicle(name='Bicycle', wheels=2, max_speed=50)
 print(bicycle.wheels, bicycle.max_speed)
 >> ('Bicycle', 2, 50)
-
+```
+Add your model based objects to database using ```push``` function, you can pass one or multiple objects at once
+```python
 db.push(tesla3, bicycle)
-
+```
+Retrieving single objects from database is possible using ```get``` function
+```python
 print(db.get(Vehicle, wheels=4).name)
 >> 'Tesla Model3'
 
 print(db.get(Vehicle, name='Bicycle').max_speed
 >> 50
-
-db.push(test_obj)
-
-get_my_obj = db.get(TestModel, a=1)
-print(get_my_obj.a)
->> 1
-
 ```
+For filtering numerical parameters you can use ```__gt``` (greater), ```__gte``` (greater or equal), ```__lt``` (lower), ```__lte```(lower or equal)
+```python
+print(db.get(Vehicle, max_speed__gt=70).name)
+>> 'Tesla Model3'
+```
+For retrieving multiple objects at once use ```filter```
 
-### Comming soon
+```python
+for vehicle in db.filter(Vehicle, max_speed__gte=10):
+    print(vehicle.name, vehicle.wheels, vehicle.max_speed)
+>>  ('Tesla Model3', 4, 230)
+>>  ('Bicycle', 2, 50)
+```
+For deleting objects from db use ```delete``` function. Returns true if changes were made to database
+```python
+db.delete(Vehicle, name='Bicycle')
+>> True
+db.delete(Vehicle, name='Starship')
+>> False
+```
+If you want completely delete all data in your database use ```drop```
+.Returns array of objects in db (empty)
+```python
+db.drop()
+>> []
+```
+### Coming soon
 
--[ ] Filter
+- [ ] Delete objects using ```.delete()```
+    
+- [ ] Order by
 
--[ ] Backup to file
+- [ ] Backup to file
 
--[ ] Integration with postgresql, reddis
+- [ ] Integration with postgresql, redis
