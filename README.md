@@ -1,7 +1,8 @@
-# ramorm
-Model based ORM in memory
+# ramorm [Alpha]
+Model based ORM in RAM. Made for performance. Please do not store critical data (yet)
 
 ![codecov](https://codecov.io/gh/Yurzs/ramorm/branch/master/graph/badge.svg)
+
 ### Installation
 ```
 pip install ramorm
