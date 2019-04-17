@@ -2,13 +2,6 @@ from ramorm.model import *
 from functools import wraps
 
 
-class Query:
-
-
-    def filter(self):
-        pass
-
-
 class Orm:
     class __Decorators(object):
 

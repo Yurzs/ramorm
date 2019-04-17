@@ -1,5 +1,5 @@
 [run]
-source = ramorm/*
+source = ramorm
 
 
 [report]
@@ -8,6 +8,6 @@ exclude_lines =
     pragma: no cover
     raise NotImplementedError
     if __name__ == .__main__.:
-ignore_errors = True
+ignore_errors = False
 omit =
     tests/*

@@ -2,31 +2,31 @@ import unittest
 
 from parameterized import parameterized
 
-from ramorm import orm, fields, model
+import ramorm
 
 
-class TestModel(model.Model):
-    a = model.IntegerField(default=1)
+class TestModel(ramorm.Model):
+    a = ramorm.IntegerField(default=1)
 
 
-class TestModel2(model.Model):
-    a = model.IntegerField(default=1)
+class TestModel2(ramorm.Model):
+    a = ramorm.IntegerField(default=1)
 
 
 class OrmTest(unittest.TestCase):
 
     @parameterized.expand([
         ['int', 123],
-        ['obj', model.Model]
+        ['obj', ramorm.Model]
     ])
 
     def test_Orm(self, name, val):
-        self.assertTrue(orm.Orm('test'))
+        self.assertTrue(ramorm.Orm('test'))
         with self.assertRaises(TypeError):
-            orm.Orm(val)
+            ramorm.Orm(val)
 
     def test_orm_push(self):
-        db = orm.Orm('testcase')
+        db = ramorm.Orm('testcase')
         valerr = [int(), str(), float(), list(), tuple(), object(), int, str, float, list, tuple, object]
         for item in valerr:
             with self.assertRaises(ValueError):
@@ -34,7 +34,7 @@ class OrmTest(unittest.TestCase):
         self.assertTrue(db.push(TestModel()))
 
     def test_orm_get(self):
-        db = orm.Orm('testcase')
+        db = ramorm.Orm('testcase')
         test = TestModel()
         test2 = TestModel2()
         db.push(test)
@@ -44,14 +44,14 @@ class OrmTest(unittest.TestCase):
         self.assertNotEqual(db.get(TestModel), test2)
 
     def test_orm_drop(self):
-        db = orm.Orm('testcase')
+        db = ramorm.Orm('testcase')
         test = TestModel()
         db.push(test)
         self.assertEqual(db.get(TestModel), test)
         self.assertEqual(db.drop(), [])
 
     def test_orm_delete(self):
-        db = orm.Orm('testcase')
+        db = ramorm.Orm('testcase')
         test = TestModel()
         db.push(test)
         test3 = TestModel(a=2)
@@ -67,7 +67,7 @@ class OrmTest(unittest.TestCase):
 class FieldsTest(unittest.TestCase):
 
     def test_IntegerField(self):
-        self.assertTrue(fields.IntegerField(default=1))
+        self.assertTrue(ramorm.IntegerField(default=1))
 
 
 if __name__ == '__main__':
