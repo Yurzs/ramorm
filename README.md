@@ -18,22 +18,22 @@ class Vehicle(model.Model):
     wheels = model.IntegerField(default=4)
     max_speed = model.IntegerField(default=100)
 
-tesla3 = Vehicle(name='Tesla Model3', max_speed=230)
-print(tesla3.name,tesla3.wheels, tesla3.max_speed)
->> ('Tesla Model3', 4, 230)
+sports_car = Vehicle(name='Aventador', max_speed=230)
+print(sports_car.name,sports_car.wheels, sports_car.max_speed)
+>> 'Aventador' 4 230
 
 bicycle = Vehicle(name='Bicycle', wheels=2, max_speed=50)
 print(bicycle.wheels, bicycle.max_speed)
->> ('Bicycle', 2, 50)
+>> 'Bicycle' 2 50
 ```
 Add your model based objects to database using ```push``` function, you can pass one or multiple objects at once
 ```python
-db.push(tesla3, bicycle)
+db.push(sports_car, bicycle)
 ```
 Retrieving single objects from database is possible using ```get``` function
 ```python
 print(db.get(Vehicle, wheels=4).name)
->> 'Tesla Model3'
+>> 'Aventador'
 
 print(db.get(Vehicle, name='Bicycle').max_speed
 >> 50
@@ -41,15 +41,15 @@ print(db.get(Vehicle, name='Bicycle').max_speed
 For filtering numerical parameters you can use ```__gt``` (greater), ```__gte``` (greater or equal), ```__lt``` (lower), ```__lte```(lower or equal)
 ```python
 print(db.get(Vehicle, max_speed__gt=70).name)
->> 'Tesla Model3'
+>> 'Aventador'
 ```
 For retrieving multiple objects at once use ```filter```
 
 ```python
 for vehicle in db.filter(Vehicle, max_speed__gte=10):
     print(vehicle.name, vehicle.wheels, vehicle.max_speed)
->>  ('Tesla Model3', 4, 230)
->>  ('Bicycle', 2, 50)
+>>  'Aventador' 4 230
+>>  'Bicycle' 2 50
 ```
 For deleting objects from db use ```delete``` function. Returns ```True``` if changes were made to database
 ```python
