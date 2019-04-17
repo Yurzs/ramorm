@@ -4,7 +4,7 @@ import re
 
 class Model:
     class Meta:
-        pass
+        unique_together = list()
 
     def __init__(self, **kwargs):
         self.__fields__ = {}
@@ -17,3 +17,9 @@ class Model:
                 else:
                     setattr(self, attr, item.set(kwargs.get(attr), attr))
 
+    @property
+    def pk(self):
+        for fname, field in self.__fields__.items():
+            if field.primary_key:
+                return getattr(self, fname)
+        return

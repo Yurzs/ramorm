@@ -22,22 +22,28 @@ class SetDefault(Action):
 
 
 class Field:
-    def __init__(self, null=False, blank=False, primary_key=False, default=None, **kwargs):
+    def __init__(self, null=False, blank=False, primary_key=False, default=None, ai=False,  **kwargs):
         self.default = default
         self.null = null
         self.blank = blank
         self.primary_key = primary_key
+        if ai:
+            self.ai = lambda x: x + 1
+        else:
+            self.ai = False
         for kwarg in kwargs:
             setattr(self, kwarg, kwargs.get(kwarg))
 
     type = object
 
     def validate(self, value):
-        return
+        return value
 
     def set(self, value, field_name):
         if self.default and not value:
             return self.default
+        elif self.ai and not value:
+            return self.ai
         elif not self.null and not value:
             raise ValueError(f'{field_name} = {self.__class__.__name__}(null={self.null}) but value is None')
         elif not self.blank and value == '':

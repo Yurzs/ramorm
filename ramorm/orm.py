@@ -7,7 +7,6 @@ class Orm:
 
         @classmethod
         def validate_input_model(cls, func):
-
             def check(obj):
                 if isinstance(obj, type):
                     if issubclass(obj, Model):
@@ -34,17 +33,65 @@ class Orm:
         if not isinstance(database_name, str):
             raise TypeError(f'Database name should be string')
         self.__database_name__ = str(database_name)
-        self.__storage___ = []
+        self.__storage__ = []
+        self.__indexer__ = {}
 
+    def __check_ai__(self, model_object):
+        """
+        Replace AutoIncreasement field to int value
+        :param model_object: Model object
+        :return: Model object
+        """
+        for fname, field in model_object.__fields__.items():
+            if field.ai:
+                try:
+                    next_val = field.ai(self.__indexer__[model_object.__class__.__name__][fname])
+                    setattr(model_object, fname, field.ai(self.__indexer__[model_object.__class__.__name__][fname]))
+                    self.__indexer__[model_object.__class__.__name__][fname] = next_val
+                except KeyError:
+                    setattr(model_object, fname, 0)
+                    self.__indexer__[model_object.__class__.__name__][fname] = 0
+        return model_object
 
-    @__Decorators.validate_input_model
-    def push(self, model_object):
-        self.__storage___.append(model_object)
+    def __single_pk__(self, model_object):
+        """
+        Check Model object for single Primary Key field
+        :param model_object: Model object
+        :return: Model object
+        """
+        pk_count = 0
+        for fname, field in model_object.__fields__.items():
+            if field.primary_key:
+                pk_count += 1
+        if pk_count > 1:
+            raise AttributeError('Multiple PK fields')
         return model_object
 
     @__Decorators.validate_input_model
-    def get(self, model_class, **kwargs):
-        copy = self.__storage___.copy()
+    def push(self, model_object):
+        """
+        Add objects to database
+        :param model_object: Model object
+        :return: Model object
+        """
+        try:
+            self.__indexer__[model_object.__class__.__name__]
+        except KeyError:
+            self.__indexer__[model_object.__class__.__name__] = {}
+        self.__check_ai__(model_object)
+        self.__single_pk__(model_object)
+        self.__storage__.append(model_object)
+        return model_object
+
+    @__Decorators.validate_input_model
+    def get(self, model_class, **kwargs) -> 'Model':
+        """
+        Get single first found object in database which falls under params passed in kwargs
+        :param model_class: Model
+        :param kwargs: model field values
+        :return: Model object
+        """
+        copy = self.__storage__.copy()
         for n, item in enumerate(copy):
             if isinstance(item, model_class):
                 for_trigger = len(kwargs)
@@ -70,9 +117,15 @@ class Orm:
         return None
 
     @__Decorators.validate_input_model
-    def filter(self, model_class, **kwargs):
+    def filter(self, model_class, **kwargs) -> list:
+        """
+        Receive list of objects found in database according params passed
+        :param model_class: Model
+        :param kwargs: filter parameters
+        :return: list of model objects
+        """
         found = []
-        copy = self.__storage___.copy()
+        copy = self.__storage__.copy()
         for n, item in enumerate(copy):
             if isinstance(item, model_class):
                 for_trigger = len(kwargs)
@@ -99,14 +152,24 @@ class Orm:
 
     @__Decorators.validate_input_model
     def delete(self, node_class, **kwargs):
+        """
+        Delete objects in database according to Model and params
+        :param node_class: Model
+        :param kwargs: params
+        :return:
+        """
         changes_made = False
         for item in self.filter(node_class, **kwargs):
-            ind = self.__storage___.index(item)
-            self.__storage___.pop(ind)
+            ind = self.__storage__.index(item)
+            self.__storage__.pop(ind)
             changes_made = True
         return changes_made
 
     def drop(self):
-        self.__storage___ = []
-        return self.__storage___
+        """
+        Delete all data in database
+        :return:
+        """
+        self.__storage__ = []
+        return self.__storage__
 
