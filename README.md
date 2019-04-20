@@ -65,12 +65,13 @@ db.drop()
 >> []
 ```
 ### Coming soon
+- [ ] Relations
 
-- [ ] Delete objects using ```.delete()```
+- [ ] Delete objects using ```.delete()``` (Questionable)
     
-- [ ] Order by
+- [x] Order by
 
-- [ ] Backup to file
+- [x] Backup to file
 
 - [x] PyPI package
 

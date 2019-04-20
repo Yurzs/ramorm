@@ -1,5 +1,21 @@
 from ramorm.model import *
 from functools import wraps
+from functools import partial
+import pickle
+
+
+class QuerySet(list):
+    """
+    Subclass of list for filtering
+    """
+    def order_by(self, field, reverse=False) -> 'QuerySet':
+        """
+        Sort QuerySet by Model field
+        :param field: Model attr
+        :param reverse: Reverse resulting QuerySet
+        :return: QuerySet
+        """
+        return QuerySet(sorted(self, key=lambda x: getattr(x, field), reverse=reverse))
 
 
 class Orm:
@@ -43,10 +59,10 @@ class Orm:
         :return: Model object
         """
         for fname, field in model_object.__fields__.items():
-            if field.ai:
+            if getattr(field, 'ai', None):
                 try:
-                    next_val = field.ai(self.__indexer__[model_object.__class__.__name__][fname])
-                    setattr(model_object, fname, field.ai(self.__indexer__[model_object.__class__.__name__][fname]))
+                    next_val = field.ai + self.__indexer__[model_object.__class__.__name__][fname]
+                    setattr(model_object, fname, self.__indexer__[model_object.__class__.__name__][fname] + field.ai)
                     self.__indexer__[model_object.__class__.__name__][fname] = next_val
                 except KeyError:
                     setattr(model_object, fname, 0)
@@ -61,10 +77,27 @@ class Orm:
         """
         pk_count = 0
         for fname, field in model_object.__fields__.items():
-            if field.primary_key:
+            if getattr(field, 'primary_key', None):
                 pk_count += 1
         if pk_count > 1:
             raise AttributeError('Multiple PK fields')
+        return model_object
+
+    def __foreign_key_resolve(self, model_object):
+        def valget():
+            return
+
+        def valset():
+            return
+
+        def valdel():
+            return
+
+        for fname, field in model_object.__fields__.items():
+            if isinstance(field, ForeignKey):
+                print(model_object, fname, getattr(model_object, fname))
+                setattr(model_object, fname, property(fget=partial(self.get, field.to_model,
+                                                                   pk=int(getattr(model_object, fname)))))
         return model_object
 
     @__Decorators.validate_input_model
@@ -80,11 +113,12 @@ class Orm:
             self.__indexer__[model_object.__class__.__name__] = {}
         self.__check_ai__(model_object)
         self.__single_pk__(model_object)
+        self.__foreign_key_resolve(model_object)
         self.__storage__.append(model_object)
         return model_object
 
     @__Decorators.validate_input_model
-    def get(self, model_class, **kwargs) -> 'Model':
+    def get(self, model_class, **kwargs) -> 'Model' or None:
         """
         Get single first found object in database which falls under params passed in kwargs
         :param model_class: Model
@@ -117,14 +151,14 @@ class Orm:
         return None
 
     @__Decorators.validate_input_model
-    def filter(self, model_class, **kwargs) -> list:
+    def filter(self, model_class, **kwargs) -> QuerySet:
         """
         Receive list of objects found in database according params passed
         :param model_class: Model
         :param kwargs: filter parameters
-        :return: list of model objects
+        :return: QuerySet (list)
         """
-        found = []
+        found = QuerySet()
         copy = self.__storage__.copy()
         for n, item in enumerate(copy):
             if isinstance(item, model_class):
@@ -151,7 +185,7 @@ class Orm:
         return found
 
     @__Decorators.validate_input_model
-    def delete(self, node_class, **kwargs):
+    def delete(self, node_class, **kwargs) -> bool:
         """
         Delete objects in database according to Model and params
         :param node_class: Model
@@ -165,7 +199,7 @@ class Orm:
             changes_made = True
         return changes_made
 
-    def drop(self):
+    def drop(self) -> list:
         """
         Delete all data in database
         :return:
@@ -173,3 +207,10 @@ class Orm:
         self.__storage__ = []
         return self.__storage__
 
+    def file_export(self, opened_file) -> bool:
+        pickle.dump(self.__storage__, opened_file)
+        return True
+
+    def file_import(self, opened_file) -> bool:
+        self.__storage__ = pickle.load(opened_file)
+        return True

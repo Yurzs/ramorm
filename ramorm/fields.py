@@ -1,6 +1,5 @@
 from ramorm.primitives import *
 
-
 class ValidationError(Exception):
     pass
 
@@ -28,9 +27,9 @@ class Field:
         self.blank = blank
         self.primary_key = primary_key
         if ai:
-            self.ai = lambda x: x + 1
+            self.ai = 1
         else:
-            self.ai = False
+            self.ai = 0
         for kwarg in kwargs:
             setattr(self, kwarg, kwargs.get(kwarg))
 
@@ -95,6 +94,25 @@ class NullField(Field):
 
 class ForeignKey(Field):
     type = obj_link
+
+    def __init__(self, to_model, on_delete, null=False, blank=False):
+        self.to_model = to_model
+        self.on_delete = on_delete
+        self.null = null
+        self.blank = blank
+
+    def set(self, value, field_name):
+        if not self.null and value is None:
+            raise ValueError(f'{field_name} = {self.__class__.__name__}(null={self.null}) but value is None')
+        elif not self.blank and value == '':
+            raise ValueError(f'{field_name} = {self.__class__.__name__}(blank={self.blank}) but value is ""')
+        elif self.null and value is None:
+            return None
+        elif self.blank and value is None:
+            return ''
+        elif value:
+            print(value)
+            return self.type(value)
 
 
 class EmailField(Field):
